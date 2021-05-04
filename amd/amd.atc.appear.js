@@ -13,6 +13,33 @@
 // 1.0.0 - Initial release
 "use strict";
 
+const ICON_URL =
+  "https://raw.githubusercontent.com/stuartmackenzie/falco-tamper-scripts/main/assets/falco_icon.png";
+
+function createBadge() {
+  const $container = document.createElement("div");
+  const $bg = document.createElement("div");
+  const $link = document.createElement("a");
+  const $img = document.createElement("img");
+
+  $link.setAttribute("href", "https://discord.gg/falcodrin");
+  $link.setAttribute("target", "_blank");
+  $link.setAttribute("title", "Falcodrin Community Discord");
+  $img.setAttribute("src", ICON_URL);
+
+  $container.style.cssText =
+    "position:fixed;left:0;bottom:0;width:80px;height:80px;background: transparent;z-index: 1000;transition: all 500ms ease; transform: translate(-80px, 80px);";
+  $bg.style.cssText =
+    "position:absolute;left:-100%;top:0;width:160px;height:160px;transform:rotate(45deg);background:#000;box-shadow: 0px 0 10px #060303; border: 1px solid #FFF;";
+  $link.style.cssText =
+    "position:absolute;display:block;top:30px;left: 12px; z-index:10;width: 40px;height:40px;border-radius: 10px;overflow:hidden;";
+  $img.style.cssText = "display:block;width:100%";
+  $link.appendChild($img);
+  $container.appendChild($bg);
+  $container.appendChild($link);
+  return $container;
+}
+
 (async function () {
   document.addEventListener("DOMContentLoaded", async function () {
     const urlMatch = location.href.match(
@@ -60,5 +87,11 @@
     if (details && details.querySelector("button")) {
       details.querySelector("button").click();
     }
+
+    const $badge = createBadge();
+    document.body.appendChild($badge);
+    setTimeout(() => {
+      $badge.style.transform = "translate(0, 0)";
+    }, 300);
   });
 })();
