@@ -4,7 +4,8 @@
 // @version      1.0.0
 // @description  Signs up for product notifications (queue entry)
 // @author       stuymack / Stuart MacKenzie
-// @match        https://www.evga.com/products/*
+// @match        https://www.evga.com/products/autoNotify*
+// @match        https://www.evga.com/products/feature.aspx
 // @run-at       document-start
 // @grant        none
 // ==/UserScript==
@@ -27,7 +28,7 @@ const RELOAD_MIN = 5; // Minimum time in SECONDS to reload if the PRODUCT_NUMBER
 const RELOAD_MAX = 8; // Maximum time in SECONDS to reload if the PRODUCT_NUMBER is not available yet for notify
 
 // ***** LOAD THIS URL IN URL BROWSER --- MAKE SURE TO MODIFY THE PN VALUE to the same PRODUCT_NUMBER VALUE *****
-// https://www.evga.com/products/autoNotify.aspx?pn=08G-P4-2289-KR&CsrfToken=596a90d0-bcdd-4361-abaf-a14ebf27bf41
+// https://www.evga.com/products/autoNotify.aspx?pn=12G-P5-3955-KR&CsrfToken=596a90d0-bcdd-4361-abaf-a14ebf27bf41
 
 // LEAVE ALONE!!
 const __CSRF__ = "b3a3ace0-fbce-4eb0-ad55-3326e6a9f10d";
