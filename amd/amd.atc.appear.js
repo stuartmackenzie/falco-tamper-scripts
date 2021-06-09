@@ -33,8 +33,6 @@ const AUTO_CLICK = true;
       throw new Error(err);
     }
 
-    console.log(urlMatch);
-
     const sku = urlMatch && urlMatch.length > 1 ? urlMatch[1] : "";
 
     if (sku) {
