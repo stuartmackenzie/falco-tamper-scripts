@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMD ATC Button Appear
 // @namespace    stuymack
-// @version      1.0.1
+// @version      1.0.2
 // @description  Makes ATC Button Appear on Product Page
 // @author       stuymack / Stuart MacKenzie
 // @match        https://www.amd.com/*/direct-buy/*
@@ -12,6 +12,7 @@
 // Version Changelog
 // 1.0.0 - Initial release
 // 1.0.1 - Added a delay so AMD pages have time to load Drupal script and wait for dynamic products to load
+// 1.0.2 - I was clobbering Out of stock notifier on product list page, that is now fixed
 "use strict";
 
 // https://www.amd.com/en/direct-buy/us
@@ -78,7 +79,7 @@ const handleProductListPage = async () => {
     const $links = $product.querySelector(".shop-links");
     if (!$links) continue;
 
-    $links.innerText = "";
+    // $links.innerText = "";
     const $button = createButton(sku);
     $links.append($button);
   }
