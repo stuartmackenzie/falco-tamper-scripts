@@ -36,3 +36,10 @@ const EMAIL = "falco.mcginty@gmail.com";
 3. If you use a product number that the queue is NOT OPEN for, the script will continue to reload the above url (ie. should work when the queue opens)
 
 4. You may see Access Denied -> clear your evga cookies, login, and try again.
+
+3080ti FTW3 Hydro Copper - https://www.evga.com/products/autonotify.aspx?pn=12G-P5-3969-KR
+3080ti XC3 Hydro Copper - https://www.evga.com/products/autonotify.aspx?pn=12G-P5-3958-KR
+3080ti FTW3 ULTRA - https://www.evga.com/products/autonotify.aspx?pn=12G-P5-3967-KR
+3080ti Hybrid FTW3 Ultra - https://www.evga.com/products/autonotify.aspx?pn=12G-P5-3968-KR
+3080ti XC3 ULTRA - https://www.evga.com/products/autonotify.aspx?pn=12G-P5-3955-KR
+3080ti Hybrid XC3 - https://www.evga.com/products/autonotify.aspx?pn=12G-P5-3958-KR

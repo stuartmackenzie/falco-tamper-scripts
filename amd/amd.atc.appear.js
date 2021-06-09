@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMD ATC Button Appear
 // @namespace    stuymack
-// @version      1.0.0
+// @version      1.0.1
 // @description  Makes ATC Button Appear on Product Page
 // @author       stuymack / Stuart MacKenzie
 // @match        https://www.amd.com/*/direct-buy/*
@@ -11,12 +11,136 @@
 
 // Version Changelog
 // 1.0.0 - Initial release
+// 1.0.1 - Added a delay so AMD pages have time to load Drupal script and wait for dynamic products to load
 "use strict";
 
-const ICON_URL =
-  "https://raw.githubusercontent.com/stuartmackenzie/falco-tamper-scripts/main/assets/falco_icon.png";
+// https://www.amd.com/en/direct-buy/us
+// https://www.amd.com/en/direct-buy/5450881700/us
 
-function createBadge() {
+// Auto click on product detail page
+const AUTO_CLICK = true;
+
+(async function () {
+  document.addEventListener("DOMContentLoaded", async function () {
+    const urlMatch = location.href.match(
+      /^https:\/\/www.amd.com\/.{2}\/direct-buy\/(\d{10})?/
+    );
+
+    if (urlMatch == null) {
+      const err =
+        "You must run this script from www.AMD.com.\nThe script will make the add to cart button appear.";
+      alert(err);
+      throw new Error(err);
+    }
+
+    console.log(urlMatch);
+
+    const sku = urlMatch && urlMatch.length > 1 ? urlMatch[1] : "";
+
+    if (sku) {
+      await handleProductDetailPage(sku);
+    } else {
+      await handleProductListPage();
+    }
+
+    await waitForDrupal();
+    Drupal.ajax.bindAjaxLinks(document);
+
+    if (sku && AUTO_CLICK) {
+      const $detailButton = document.querySelector(
+        "#product-details-info .product-page-description button"
+      );
+      if ($detailButton) $detailButton.click();
+    }
+
+    const $badge = createBadge();
+    document.body.appendChild($badge);
+
+    await sleep(300);
+
+    $badge.style.transform = "translate(0, 0)";
+  });
+})();
+
+// Add buttons to products on product list page
+const handleProductListPage = async () => {
+  const $products = await waitForProducts();
+
+  for (const $product of $products) {
+    const $existingButton = $product.querySelector(".shop-links button");
+    if ($existingButton) continue;
+
+    const skuMatch = $product
+      .querySelector(".shop-full-specs-link a")
+      .getAttribute("href")
+      .match(/\d{10}/);
+    const sku = skuMatch && skuMatch.length > 0 ? skuMatch[0] : "";
+    if (!sku) continue;
+
+    const $links = $product.querySelector(".shop-links");
+    if (!$links) continue;
+
+    $links.innerText = "";
+    const $button = createButton(sku);
+    $links.append($button);
+  }
+};
+
+// Add button to product on product detail page
+const handleProductDetailPage = (sku) => {
+  if (!sku) return;
+  const $details = document.querySelector(
+    "#product-details-info .product-page-description"
+  );
+  const $existingButton = $details ? $details.querySelector("button") : null;
+  if ($details && !$existingButton) {
+    const $button = createButton(sku);
+    $details.append($button);
+  }
+};
+
+// Generic sleep timeout function
+const sleep = (duration = 1000) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, duration);
+  });
+};
+
+// Waits fpr products to load
+const waitForProducts = async () => {
+  let $products = document.querySelectorAll(".container .views-row");
+  while ($products.length === 0) {
+    await sleep(300);
+    $products = document.querySelectorAll(".container .views-row");
+  }
+  return $products;
+};
+
+// Waits for Drupal to load in the page
+const waitForDrupal = async () => {
+  while (typeof window["Drupal"] !== "object") {
+    await sleep(300);
+  }
+};
+
+// Creates Cart Button
+// `<button class="btn-shopping-cart btn-shopping-neutral use-ajax" data-progress-type="fullscreen" href="/en/direct-buy/add-to-cart/${idMatch[0]}">Add To Cart</button>`
+const createButton = (sku) => {
+  const $button = document.createElement("button");
+  $button.setAttribute(
+    "class",
+    "btn-shopping-cart btn-shopping-neutral use-ajax"
+  );
+  $button.setAttribute("data-progress-type", "fullscreen");
+  $button.setAttribute("href", `/en/direct-buy/add-to-cart/${sku}`);
+  $button.innerText = "Add To Cart";
+  return $button;
+};
+
+// Creates Falco badge in bottom left corner
+const createBadge = () => {
   const $container = document.createElement("div");
   const $bg = document.createElement("div");
   const $link = document.createElement("a");
@@ -25,7 +149,10 @@ function createBadge() {
   $link.setAttribute("href", "https://discord.gg/falcodrin");
   $link.setAttribute("target", "_blank");
   $link.setAttribute("title", "Falcodrin Community Discord");
-  $img.setAttribute("src", ICON_URL);
+  $img.setAttribute(
+    "src",
+    "https://raw.githubusercontent.com/stuartmackenzie/falco-tamper-scripts/main/assets/falco_icon.png"
+  );
 
   $container.style.cssText =
     "position:fixed;left:0;bottom:0;width:80px;height:80px;background: transparent;z-index: 1000;transition: all 500ms ease; transform: translate(-80px, 80px);";
@@ -38,60 +165,4 @@ function createBadge() {
   $container.appendChild($bg);
   $container.appendChild($link);
   return $container;
-}
-
-(async function () {
-  document.addEventListener("DOMContentLoaded", async function () {
-    const urlMatch = location.href.match(
-      /^https:\/\/www.amd.com\/.{2}\/direct-buy\/(\d{10})?/
-    );
-    if (urlMatch == null) {
-      const err =
-        "You must run this script from www.AMD.com.\nThe script will make the add to cart button appear.";
-      alert(err);
-      throw new Error(err);
-    }
-
-    const pid = urlMatch[1];
-
-    const products = document.querySelectorAll(
-      ".view-shop-product-search .views-row"
-    );
-
-    products.forEach((p) => {
-      const idMatch = p
-        .querySelector(".shop-full-specs-link a")
-        .getAttribute("href")
-        .match(/\d{10}/);
-      if (idMatch == null) return;
-      if (p.querySelector(".shop-links button") != null) return;
-
-      p.querySelector(".shop-links").insertAdjacentHTML(
-        "beforeend",
-        `<button class="btn-shopping-cart btn-shopping-neutral use-ajax" data-progress-type="fullscreen" href="/en/direct-buy/add-to-cart/${idMatch[0]}">Add To Cart</button>`
-      );
-    });
-
-    const details = document.querySelector(
-      "#product-details-info .product-page-description"
-    );
-    if (details && pid && !details.querySelector("button")) {
-      details.insertAdjacentHTML(
-        "beforeend",
-        `<button class="btn-shopping-cart btn-shopping-neutral use-ajax" data-progress-type="fullscreen" href="/en/direct-buy/add-to-cart/${pid}">Add to Cart</button>`
-      );
-    }
-
-    Drupal.ajax.bindAjaxLinks(document);
-
-    if (details && details.querySelector("button")) {
-      details.querySelector("button").click();
-    }
-
-    const $badge = createBadge();
-    document.body.appendChild($badge);
-    setTimeout(() => {
-      $badge.style.transform = "translate(0, 0)";
-    }, 300);
-  });
-})();
+};
