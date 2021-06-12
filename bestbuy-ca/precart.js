@@ -3,7 +3,7 @@
 // @namespace    http://tampermonkey.net/
 // @version      0.3
 // @description  Adds "Add to Cart" button to a Out-of-stock item page.
-// @author       hello
+// @author       d0nb1t#2670 (discord)
 // @match        https://www.bestbuy.ca/*
 // @grant        none
 //
