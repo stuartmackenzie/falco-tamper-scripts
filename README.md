@@ -8,6 +8,12 @@ Tamper scripts to help with retailer checkout
 
 [Falcodrin Twitch](https://www.twitch.tv/falcodrin)
 
+## Canada
+
+[Kings Discord](https://discord.gg/wZPzZf4M)
+
+[Kings Twitch](https://www.twitch.tv/kingstwitch_)
+
 ## AMD Script
 
 - Displays add to cart buttons on AMD product list page or product detail page.
