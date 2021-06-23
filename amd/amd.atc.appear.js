@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMD ATC Button Appear
 // @namespace    stuymack
-// @version      1.0.2
+// @version      1.0.3
 // @description  Makes ATC Button Appear on Product Page
 // @author       stuymack / Stuart MacKenzie
 // @match        https://www.amd.com/*/direct-buy/*
@@ -13,6 +13,7 @@
 // 1.0.0 - Initial release
 // 1.0.1 - Added a delay so AMD pages have time to load Drupal script and wait for dynamic products to load
 // 1.0.2 - I was clobbering Out of stock notifier on product list page, that is now fixed
+// 1.0.3 - Added await for dynamic product detail info to load
 "use strict";
 
 // https://www.amd.com/en/direct-buy/us
@@ -86,11 +87,9 @@ const handleProductListPage = async () => {
 };
 
 // Add button to product on product detail page
-const handleProductDetailPage = (sku) => {
+const handleProductDetailPage = async (sku) => {
   if (!sku) return;
-  const $details = document.querySelector(
-    "#product-details-info .product-page-description"
-  );
+  const $details = await waitForDetails();
   const $existingButton = $details ? $details.querySelector("button") : null;
   if ($details && !$existingButton) {
     const $button = createButton(sku);
@@ -107,14 +106,26 @@ const sleep = (duration = 1000) => {
   });
 };
 
-// Waits fpr products to load
+// Waits for products to load
 const waitForProducts = async () => {
-  let $products = document.querySelectorAll(".container .views-row");
+  const sel = ".container .views-row";
+  let $products = document.querySelectorAll(sel);
   while ($products.length === 0) {
     await sleep(300);
-    $products = document.querySelectorAll(".container .views-row");
+    $products = document.querySelectorAll(sel);
   }
   return $products;
+};
+
+// Waits for product details to load
+const waitForDetails = async () => {
+  const sel = "#product-details-info .product-page-description";
+  let $details = document.querySelector(sel);
+  while (!$details) {
+    await sleep(300);
+    $details = document.querySelector(sel);
+  }
+  return $details;
 };
 
 // Waits for Drupal to load in the page
