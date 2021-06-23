@@ -10,7 +10,7 @@ Tamper scripts to help with retailer checkout
 
 ## Canada
 
-[Kings Discord](https://discord.gg/wZPzZf4M)
+[Kings Discord](https://discord.gg/z2kdWWtwMv)
 
 [Kings Twitch](https://www.twitch.tv/kingstwitch_)
 
