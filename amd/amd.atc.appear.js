@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMD ATC Button Appear
 // @namespace    stuymack
-// @version      1.0.3
+// @version      1.0.4
 // @description  Makes ATC Button Appear on Product Page
 // @author       stuymack / Stuart MacKenzie
 // @match        https://www.amd.com/*/direct-buy/*
@@ -14,6 +14,8 @@
 // 1.0.1 - Added a delay so AMD pages have time to load Drupal script and wait for dynamic products to load
 // 1.0.2 - I was clobbering Out of stock notifier on product list page, that is now fixed
 // 1.0.3 - Added await for dynamic product detail info to load
+// 1.0.4 - Added dark mode option on bottom right
+
 "use strict";
 
 // https://www.amd.com/en/direct-buy/us
@@ -59,6 +61,13 @@ const AUTO_CLICK = true;
     await sleep(300);
 
     $badge.style.transform = "translate(0, 0)";
+
+    const $lightdark = createDarkModeOption();
+    document.body.appendChild($lightdark);
+
+    await sleep(300);
+
+    $lightdark.style.transform = "translate(0, 0)";
   });
 })();
 
@@ -171,6 +180,34 @@ const createBadge = () => {
   $link.style.cssText =
     "position:absolute;display:block;top:30px;left: 12px; z-index:10;width: 40px;height:40px;border-radius: 10px;overflow:hidden;";
   $img.style.cssText = "display:block;width:100%";
+  $link.appendChild($img);
+  $container.appendChild($bg);
+  $container.appendChild($link);
+  return $container;
+};
+
+const createDarkModeOption = () => {
+  const $container = document.createElement("div");
+  const $bg = document.createElement("div");
+  const $link = document.createElement("a");
+  const $img = document.createElement("img");
+
+  $link.setAttribute("href", "#");
+  $link.setAttribute("title", "Dark Mode");
+  $img.setAttribute(
+    "src",
+    "https://raw.githubusercontent.com/iramirez-aptera//falco-tamper-scripts/main/assets/moon.png"
+  );
+  $img.setAttribute(
+      "onclick",
+      "document.getElementsByClassName('container-fluid top-content')[0].style.backgroundColor = 'darkgrey'; document.body.style.backgroundColor = '#23272A';");
+  $container.style.cssText =
+    "position:fixed;right:0;bottom:0;width:80px;height:80px;background: transparent;z-index: 1000;transition: all 500ms ease; transform: translate(-80px, 80px);";
+  $bg.style.cssText =
+    "position:absolute;right:-100%;top:0;width:160px;height:160px;transform:rotate(45deg);background:#000;box-shadow: 0px 0 10px #060303; border: 1px solid #FFF;";
+  $link.style.cssText =
+    "position:absolute;display:block;top:30px;right: 12px; z-index:10;width: 40px;height:40px;border-radius: 10px;overflow:hidden;";
+  $img.style.cssText = "display:block;width:100%;height:100%";
   $link.appendChild($img);
   $container.appendChild($bg);
   $container.appendChild($link);
